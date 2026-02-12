@@ -1083,7 +1083,7 @@ function getTraces() {
 
 // ── HTTP Server ─────────────────────────────────────
 
-const server = createServer((req, res) => {
+const server = createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const path = url.pathname;
 
