@@ -175,9 +175,10 @@ export class AgentCollector extends EventEmitter {
     if (msg.type === 'event') {
       if (msg.event === 'connect.challenge') {
         // Determine client ID based on agent type
+        // OpenClaw uses 'cli', Clawdbot uses 'clawdbot-probe'
         const firstAgent = gw.agents[0];
         const isOpenClaw = firstAgent?.type === 'openclaw' || this.config?.type === 'openclaw';
-        const clientId = isOpenClaw ? 'openclaw' : 'clawdbot-probe';
+        const clientId = isOpenClaw ? 'cli' : 'clawdbot-probe';
         
         this._sendFrame(gwKey, {
           type: 'req', id: String(++this._reqCounter), method: 'connect',
