@@ -66,7 +66,7 @@ export class AgentCollector extends EventEmitter {
       if (!this.state.has(agent.id)) {
         this.state.set(agent.id, {
           id: agent.id, gatewayAgentId: agent.gatewayAgentId || agent.id,
-          name: agent.name, emoji: agent.emoji,
+          name: agent.name, emoji: agent.emoji, type: agent.type,
           machine: agent.machine, online: false, lastSeen: null,
           health: null, sessions: null, usage: null, heartbeat: null,
           presence: null, channels: null, cron: null, error: null,

@@ -8,7 +8,8 @@
       "host": "127.0.0.1",
       "port": 18789,
       "token": "YOUR_GATEWAY_TOKEN_HERE",
-      "workspace": "/path/to/agent/workspace"
+      "workspace": "/path/to/agent/workspace",
+      "type": "openclaw"
     }
   ],
   "pollIntervalMs": 15000,

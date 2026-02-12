@@ -405,11 +405,14 @@ function buildAgentHTML(id, a, health) {
   const mainSess = sessions.find(s => s.key?.endsWith(':main') || s.label === 'main');
   const ctxPct = mainSess?.contextPct || null;
 
+  // Platform type badge
+  const typeBadge = a.type ? `<span style="font-size:0.55rem;padding:1px 5px;border-radius:3px;background:var(--bg-primary);color:var(--text-tertiary);margin-left:4px;text-transform:uppercase;letter-spacing:0.04em;">${a.type}</span>` : '';
+
   let html = `
     <div class="agent-header">
       <div class="agent-name">
         <span class="agent-emoji">${a.emoji || '🤖'}</span>
-        <span>${a.name || id}</span>
+        <span>${a.name || id}${typeBadge}</span>
       </div>
       <span class="agent-badge ${badgeClass}">${badgeLabel}</span>
     </div>
