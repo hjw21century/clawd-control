@@ -1,4 +1,4 @@
-function setSecurityHeaders(res) {
+export function setSecurityHeaders(res) {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
@@ -7,7 +7,3 @@ function setSecurityHeaders(res) {
   res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
   res.setHeader('Referrer-Policy', 'no-referrer');
 }
-
-module.exports = {
-  setSecurityHeaders,
-};

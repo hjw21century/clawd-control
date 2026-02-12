@@ -1,6 +1,6 @@
-const { run } = require('../utils');
+import { run } from '../utils.js';
 
-function checkSystem() {
+export function checkSystem() {
   const results = [];
   const fv = run('fdesetup status 2>/dev/null', 'unknown');
   results.push({ name: 'FileVault (disk encryption)', status: fv.includes('On') ? 'pass' : 'fail', detail: fv });
@@ -16,5 +16,3 @@ function checkSystem() {
   results.push({ name: 'Battery', status: battMatch && parseInt(battMatch[1]) < 30 && !charging ? 'warn' : 'info', detail: batt.split('\n').slice(1).join(' ').trim() || batt });
   return results;
 }
-
-module.exports = { checkSystem };

@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
 
-function checkSecrets(config) {
+export function checkSecrets(config) {
   const results = [];
   const secretsDir = config.secretsDir;
 
@@ -82,12 +82,11 @@ function checkSecrets(config) {
   });
 
   // Check 7: Credential sprawl (secrets outside secrets/)
-  const sprawlPatterns = ['**/*.env', '**/.env*', '**/config.json'];
   let sprawlFiles = [];
   try {
-    const { execSync } = require('child_process');
     // Look for .env files outside secrets/
     const findCmd = `find "${config.workspace}" -type f \\( -name "*.env" -o -name ".env*" \\) ! -path "*/node_modules/*" ! -path "*/.git/*" ! -path "*/secrets/*" 2>/dev/null | head -20`;
+    const { execSync } = await import('child_process');
     const output = execSync(findCmd, { encoding: 'utf8', timeout: 5000 }).trim();
     sprawlFiles = output ? output.split('\n').filter(f => f) : [];
   } catch {}
@@ -103,5 +102,3 @@ function checkSecrets(config) {
 
   return results;
 }
-
-module.exports = { checkSecrets };

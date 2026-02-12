@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const { run } = require('../utils');
+import fs from 'fs';
+import path from 'path';
+import { run } from '../utils.js';
 
-function checkExposedCredentials(config) {
+export function checkExposedCredentials(config) {
   const results = [];
   for (const dir of ['skills', 'plans']) {
     const fullDir = path.join(config.workspace, dir);
@@ -23,5 +23,3 @@ function checkExposedCredentials(config) {
   }
   return results;
 }
-
-module.exports = { checkExposedCredentials };

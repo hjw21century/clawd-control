@@ -1,7 +1,7 @@
-const fs = require('fs');
-const { run } = require('../utils');
+import fs from 'fs';
+import { run } from '../utils.js';
 
-function checkNetwork(config, getTokenInfo) {
+export function checkNetwork(config, getTokenInfo) {
   const results = [];
   
   // Try lsof first, fall back to netstat if it fails or returns nothing
@@ -62,5 +62,3 @@ function checkNetwork(config, getTokenInfo) {
 
   return results;
 }
-
-module.exports = { checkNetwork };

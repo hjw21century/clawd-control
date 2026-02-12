@@ -209,12 +209,10 @@ async function handleAgentAction(agentId, action) {
 }
 
 // ── Security Audit (Frodo's checks) ─────────────────
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+import os from 'os';
 
-function runSecurityAudit() {
+async function runSecurityAudit() {
   const secDir = join(DIR, 'security-lib', 'checks');
-  const os = require('os');
   const config = {
     workspace: join(os.homedir(), 'clawd'),
     secretsDir: join(os.homedir(), 'clawd', 'secrets'),
@@ -223,12 +221,15 @@ function runSecurityAudit() {
     maxLogSizeMB: 5,
   };
 
-  const { checkSecrets } = require(join(secDir, 'secrets.js'));
-  const { checkExposedCredentials } = require(join(secDir, 'credentials.js'));
-  const { checkNetwork } = require(join(secDir, 'network.js'));
-  const { checkSystem } = require(join(secDir, 'system.js'));
-  const { checkGatewayConfig } = require(join(secDir, 'gateway.js'));
-  const { checkAccounts } = require(join(secDir, 'accounts.js'));
+  // Dynamic imports for ES modules
+  const [{ checkSecrets }, { checkExposedCredentials }, { checkNetwork }, { checkSystem }, { checkGatewayConfig }, { checkAccounts }] = await Promise.all([
+    import(join(secDir, 'secrets.js')),
+    import(join(secDir, 'credentials.js')),
+    import(join(secDir, 'network.js')),
+    import(join(secDir, 'system.js')),
+    import(join(secDir, 'gateway.js')),
+    import(join(secDir, 'accounts.js')),
+  ]);
 
   const dummyTokenInfo = () => ({ expired: false, remainingHours: 24, ageHours: 0, maxAgeDays: 7 });
 
@@ -269,7 +270,6 @@ function getAgentDetail(agentId) {
     const p = join(ws, dir);
     if (!existsSync(p)) return [];
     try {
-      const { readdirSync, statSync } = require('fs');
       return readdirSync(p).filter(f => !f.startsWith('.')).map(f => {
         const fp = join(p, f);
         const st = statSync(fp);
@@ -1203,7 +1203,7 @@ const server = createServer((req, res) => {
   // ── Security Audit ──
   if (path === '/api/security-audit' && req.method === 'GET') {
     try {
-      const result = runSecurityAudit();
+      const result = await runSecurityAudit();
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(result));
     } catch (e) {

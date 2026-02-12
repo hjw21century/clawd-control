@@ -11,7 +11,7 @@ function getRateState(ip) {
   return rateLimits.get(ip);
 }
 
-function trackFailedAuth(req, getClientIP) {
+export function trackFailedAuth(req, getClientIP) {
   const ip = getClientIP(req);
   const state = getRateState(ip);
   const now = Date.now();
@@ -23,7 +23,7 @@ function trackFailedAuth(req, getClientIP) {
   }
 }
 
-function checkRateLimit(req, res, getClientIP, auditLog) {
+export function checkRateLimit(req, res, getClientIP, auditLog) {
   const ip = getClientIP(req);
   const state = getRateState(ip);
   const now = Date.now();
@@ -54,9 +54,4 @@ function checkRateLimit(req, res, getClientIP, auditLog) {
   return true;
 }
 
-module.exports = {
-  checkRateLimit,
-  trackFailedAuth,
-  MAX_REQUESTS,
-  BLOCK_DURATION_MS,
-};
+export { MAX_REQUESTS, BLOCK_DURATION_MS };

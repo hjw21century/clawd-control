@@ -1,8 +1,8 @@
-const fs = require('fs');
+import fs from 'fs';
 
-const MAX_LOG_SIZE = 5 * 1024 * 1024; // 5MB
+export const MAX_LOG_SIZE = 5 * 1024 * 1024; // 5MB
 
-function auditLog(config, ip, endpoint, action, detail = '') {
+export function auditLog(config, ip, endpoint, action, detail = '') {
   const entry = JSON.stringify({
     ts: new Date().toISOString(),
     ip,
@@ -24,5 +24,3 @@ function auditLog(config, ip, endpoint, action, detail = '') {
     console.error(`[audit] Failed to write log: ${e.message}`);
   }
 }
-
-module.exports = { auditLog, MAX_LOG_SIZE };

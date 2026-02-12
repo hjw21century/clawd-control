@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-function checkAccounts(config) {
+export function checkAccounts(config) {
   const results = [];
   
   if (!fs.existsSync(config.secretsDir)) {
@@ -51,5 +51,3 @@ function checkAccounts(config) {
 
   return results;
 }
-
-module.exports = { checkAccounts };

@@ -1,11 +1,11 @@
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
-const TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;  // 7 days
-const TOKEN_GRACE_MS = 60 * 60 * 1000;               // 1 hour grace after rotation
+export const TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;  // 7 days
+export const TOKEN_GRACE_MS = 60 * 60 * 1000;               // 1 hour grace after rotation
 
-function loadTokenState(config) {
+export function loadTokenState(config) {
   const tokenFile = path.join(config.secretsDir, 'dashboard.env');
   try {
     const content = fs.readFileSync(tokenFile, 'utf8');
@@ -25,7 +25,7 @@ function loadTokenState(config) {
   }
 }
 
-function saveTokenState(config, state) {
+export function saveTokenState(config, state) {
   const tokenFile = path.join(config.secretsDir, 'dashboard.env');
   let content = `# Security Dashboard Token (auto-managed)\n`;
   content += `DASHBOARD_TOKEN=${state.token}\n`;
@@ -37,7 +37,7 @@ function saveTokenState(config, state) {
   fs.writeFileSync(tokenFile, content, { mode: 0o600 });
 }
 
-function rotateToken(config, auditLog) {
+export function rotateToken(config, auditLog) {
   const oldState = loadTokenState(config);
   const newToken = crypto.randomBytes(32).toString('hex');
   const now = Date.now();
@@ -55,7 +55,7 @@ function rotateToken(config, auditLog) {
   return newToken;
 }
 
-function isTokenValid(config, candidateToken) {
+export function isTokenValid(config, candidateToken) {
   const state = loadTokenState(config);
   if (!state.token) return { valid: false, reason: 'no_token_configured' };
 
@@ -81,7 +81,7 @@ function isTokenValid(config, candidateToken) {
   return { valid: false, reason: 'invalid_token' };
 }
 
-function getTokenInfo(config) {
+export function getTokenInfo(config) {
   const state = loadTokenState(config);
   if (!state.token || !state.created) return null;
   const now = Date.now();
@@ -95,7 +95,7 @@ function getTokenInfo(config) {
   };
 }
 
-function checkAuth(config, req, res, auditLog, trackFailedAuth) {
+export function checkAuth(config, req, res, auditLog, trackFailedAuth) {
   const state = loadTokenState(config);
   if (!state.token) return true; // No token = open (legacy)
 
@@ -126,18 +126,6 @@ function checkAuth(config, req, res, auditLog, trackFailedAuth) {
   return true;
 }
 
-function getClientIP(req) {
+export function getClientIP(req) {
   return req.socket.remoteAddress || 'unknown';
 }
-
-module.exports = {
-  loadTokenState,
-  saveTokenState,
-  rotateToken,
-  isTokenValid,
-  getTokenInfo,
-  checkAuth,
-  getClientIP,
-  TOKEN_MAX_AGE_MS,
-  TOKEN_GRACE_MS,
-};

@@ -1,18 +1,34 @@
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
 
-function checkGatewayConfig() {
+export function checkGatewayConfig() {
   const results = [];
-  const configPath = path.join(os.homedir(), '.clawdbot', 'clawdbot.json');
-  if (!fs.existsSync(configPath)) {
-    results.push({ name: 'Gateway config', status: 'warn', detail: 'Config file not found' });
+  
+  // Check both OpenClaw and Clawdbot config paths
+  const openclawPath = path.join(os.homedir(), '.openclaw', 'openclaw.json');
+  const clawdbotPath = path.join(os.homedir(), '.clawdbot', 'clawdbot.json');
+  
+  let configPath = null;
+  let platform = 'unknown';
+  
+  if (fs.existsSync(openclawPath)) {
+    configPath = openclawPath;
+    platform = 'OpenClaw';
+  } else if (fs.existsSync(clawdbotPath)) {
+    configPath = clawdbotPath;
+    platform = 'Clawdbot';
+  }
+  
+  if (!configPath) {
+    results.push({ name: 'Gateway config', status: 'warn', detail: 'No OpenClaw or Clawdbot config found' });
     return results;
   }
+  
   try {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     const hasAuth = config.gateway?.auth?.token || config.gateway?.auth?.password;
-    results.push({ name: 'Gateway authentication', status: hasAuth ? 'pass' : 'info', detail: hasAuth ? 'Auth token configured' : 'No gateway auth (local-only is OK)' });
+    results.push({ name: 'Gateway authentication', status: hasAuth ? 'pass' : 'info', detail: hasAuth ? `Auth token configured (${platform})` : `No gateway auth (${platform} local-only is OK)` });
     const channels = config.channels || {};
     const activeChannels = Object.keys(channels).filter(k => channels[k]?.enabled !== false);
     results.push({ name: 'Active channels', status: 'info', detail: activeChannels.join(', ') || 'None' });
@@ -25,5 +41,3 @@ function checkGatewayConfig() {
   }
   return results;
 }
-
-module.exports = { checkGatewayConfig };
