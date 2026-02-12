@@ -660,6 +660,19 @@ async function runSecurityAudit() {
     const res = await fetch('/api/security-audit');
     const audit = await res.json();
 
+    // Handle error response or missing sections
+    if (audit.error) {
+      results.innerHTML = '<p style="color:var(--error)">❌ Audit failed: ' + esc(audit.error) + '</p>';
+      btn.disabled = false; btn.innerHTML = '<i data-lucide="search"></i> Run Audit'; refreshIcons();
+      return;
+    }
+
+    if (!audit.sections || !Array.isArray(audit.sections)) {
+      results.innerHTML = '<p style="color:var(--error)">❌ Invalid audit response: sections is not iterable</p>';
+      btn.disabled = false; btn.innerHTML = '<i data-lucide="search"></i> Run Audit'; refreshIcons();
+      return;
+    }
+
     let html = '';
     let totalPass = 0, totalWarn = 0, totalFail = 0, totalInfo = 0;
 
