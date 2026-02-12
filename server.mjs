@@ -916,7 +916,25 @@ function getSessionTrace(sessionKey) {
 // ── Traces (delegation trees) ──────────────────────
 
 function getTraces() {
-  const AGENTS_DIR = join(homedir(), '.clawdbot', 'agents');
+  // Support both OpenClaw and Clawdbot paths
+  const OPENCLAW_DIR = join(homedir(), '.openclaw', 'agents');
+  const CLAWDBOT_DIR = join(homedir(), '.clawdbot', 'agents');
+  
+  // Determine which directory to use
+  let AGENTS_DIR = null;
+  let platform = 'clawdbot';
+  
+  if (existsSync(OPENCLAW_DIR)) {
+    AGENTS_DIR = OPENCLAW_DIR;
+    platform = 'openclaw';
+  } else if (existsSync(CLAWDBOT_DIR)) {
+    AGENTS_DIR = CLAWDBOT_DIR;
+    platform = 'clawdbot';
+  } else {
+    // Neither directory exists, return empty traces
+    return [];
+  }
+  
   const traces = [];
   const sessionMap = new Map(); // sessionKey -> session metadata
 
